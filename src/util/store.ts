@@ -6,11 +6,14 @@ interface VisibilitySlice {
   setControlsVisible: (value: boolean) => void
   scoreVisible: boolean
   setScoreVisible: (value: boolean) => void
+  toggleScoreVisible: () => void
 }
 
 interface GameSlice {
   started: boolean
   setStarted: () => void
+  currentDroneId: string | null
+  setCurrentDroneId: (key: string) => void
 }
 
 interface SharedSlice {
@@ -27,6 +30,8 @@ const createVisibilitySlice: StateCreator<
   setControlsVisible: (value) => set(() => ({ controlsVisible: value })),
   scoreVisible: false,
   setScoreVisible: (value) => set(() => ({ scoreVisible: value })),
+  toggleScoreVisible: () =>
+    set((state) => ({ scoreVisible: !state.scoreVisible })),
 })
 
 const createGameSlice: StateCreator<
@@ -37,6 +42,8 @@ const createGameSlice: StateCreator<
 > = (set) => ({
   started: false,
   setStarted: () => set(() => ({ started: true })),
+  currentDroneId: null,
+  setCurrentDroneId: (key) => set(() => ({ currentDroneId: key })),
 })
 
 const createSharedSlice: StateCreator<

@@ -26,7 +26,11 @@ const GameLayer = ({ initialData }: GameLayerProps) => {
     queryKey: ['packages'],
     queryFn: fetchPackages,
   })
-  useEffect(() => console.log(drones.data, packages.data), [drones, packages])
+
+  useEffect(() => {
+    console.log(drones.data)
+    console.log(packages.data)
+  }, [drones, packages])
 
   return (
     <div
