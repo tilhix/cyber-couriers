@@ -1,8 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import apiClient from '../util/api'
 import useStore from '../util/store'
-import { GameData, GameMap, MapData, MapElement } from '../util/types'
+import {
+  DronesData,
+  GameData,
+  GameMap,
+  MapData,
+  MapElement,
+  PackagesData,
+} from '../util/types'
 import ControlLayer from './ControlLayer'
 import GameLayer from './GameLayer'
 import MapLayer from './MapLayer'
@@ -13,15 +20,57 @@ const fetchMap = async (): Promise<MapData> => {
   return response.data
 }
 
+const fetchDrones = async (): Promise<DronesData> => {
+  const response = await apiClient.get(`/api/drones`)
+  return response.data
+}
+
+const fetchPackages = async (): Promise<PackagesData> => {
+  const response = await apiClient.get(`/api/package`)
+  return response.data
+}
+
 const Game = () => {
   const controlsVisible = useStore((state) => state.controlsVisible)
   const scoreVisible = useStore((state) => state.scoreVisible)
   const started = useStore((state) => state.started)
+  const setCurrentDroneId = useStore((state) => state.setCurrentDroneId)
+  const setCurrentPackageId = useStore((state) => state.setCurrentPackageId)
 
   const map = useQuery({
     queryKey: ['map'],
     queryFn: fetchMap,
   })
+
+  const drones = useQuery({
+    queryKey: ['drones'],
+    queryFn: fetchDrones,
+  })
+
+  const packages = useQuery({
+    queryKey: ['packages'],
+    queryFn: fetchPackages,
+  })
+
+  useEffect(() => {
+    if (drones.data) {
+      console.log('drones:', drones.data)
+      const activeDrone = drones.data.runnerDrones.find(
+        (drone) => drone.status === 0
+      )
+      if (activeDrone) setCurrentDroneId(activeDrone.key)
+    }
+  }, [drones, setCurrentDroneId])
+
+  useEffect(() => {
+    if (packages.data) {
+      console.log('packages:', packages.data)
+      const activePackage = packages.data.find(
+        (item) => item.packageStatus === 0
+      )
+      if (activePackage) setCurrentPackageId(activePackage.key)
+    }
+  }, [packages, setCurrentPackageId])
 
   const gameMap: GameMap = useMemo(() => {
     const { data } = map

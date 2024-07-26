@@ -42,7 +42,7 @@ export type DroneData = {
 }
 
 export type RunnerDroneData = DroneData & {
-  carriedPackage: PackageData
+  carriedPackage: PackageData | null
 }
 
 export type PackageData = {
@@ -62,3 +62,10 @@ export type ScoreBoardData = {
   dronesUsed: number
   moves: number
 }
+
+export type DronesData = {
+  patrolDrones: DroneData[]
+  runnerDrones: RunnerDroneData[]
+}
+
+export type PackagesData = PackageData[]

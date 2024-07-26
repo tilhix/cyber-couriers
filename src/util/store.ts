@@ -13,7 +13,9 @@ interface GameSlice {
   started: boolean
   setStarted: () => void
   currentDroneId: string | null
-  setCurrentDroneId: (key: string) => void
+  setCurrentDroneId: (key: string | null) => void
+  currentPackageId: string | null
+  setCurrentPackageId: (key: string | null) => void
 }
 
 interface SharedSlice {
@@ -44,6 +46,8 @@ const createGameSlice: StateCreator<
   setStarted: () => set(() => ({ started: true })),
   currentDroneId: null,
   setCurrentDroneId: (key) => set(() => ({ currentDroneId: key })),
+  currentPackageId: null,
+  setCurrentPackageId: (key) => set(() => ({ currentPackageId: key })),
 })
 
 const createSharedSlice: StateCreator<

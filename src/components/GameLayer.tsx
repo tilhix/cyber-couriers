@@ -1,37 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
-import apiClient from '../util/api'
 import { GameData } from '../util/types'
-
-const fetchDrones = async () => {
-  const response = await apiClient.get(`/api/drones`)
-  return response.data
-}
-
-const fetchPackages = async () => {
-  const response = await apiClient.get(`/api/package`)
-  return response.data
-}
 
 type GameLayerProps = {
   initialData: GameData
 }
 
 const GameLayer = ({ initialData }: GameLayerProps) => {
-  const drones = useQuery({
-    queryKey: ['drones'],
-    queryFn: fetchDrones,
-  })
-  const packages = useQuery({
-    queryKey: ['packages'],
-    queryFn: fetchPackages,
-  })
-
-  useEffect(() => {
-    console.log(drones.data)
-    console.log(packages.data)
-  }, [drones, packages])
-
   return (
     <div
       style={{
