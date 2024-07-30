@@ -1,10 +1,11 @@
 import { GameData } from '../util/types'
+import GameTile from './GameTile'
 
 type GameLayerProps = {
-  initialData: GameData
+  gameData: GameData
 }
 
-const GameLayer = ({ initialData }: GameLayerProps) => {
+const GameLayer = ({ gameData }: GameLayerProps) => {
   return (
     <div
       style={{
@@ -15,20 +16,10 @@ const GameLayer = ({ initialData }: GameLayerProps) => {
         flexDirection: 'column',
       }}
     >
-      {initialData.map((row, index) => (
+      {gameData.map((row, index) => (
         <div key={index} style={{ display: 'flex' }}>
           {row.map((tile, index) => (
-            <div
-              key={index}
-              style={{
-                padding: '5px',
-                width: '30px',
-                height: '30px',
-                border: '1px solid red',
-              }}
-            >
-              <span>{tile ? 'T' : ''}</span>
-            </div>
+            <GameTile key={index} elem={tile} />
           ))}
         </div>
       ))}

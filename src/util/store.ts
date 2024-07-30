@@ -1,25 +1,21 @@
 import { create, StateCreator } from 'zustand'
 import { devtools } from 'zustand/middleware'
+import { MapCoordinates, MapSize } from './types'
 
 interface VisibilitySlice {
-  controlsVisible: boolean
-  setControlsVisible: (value: boolean) => void
   scoreVisible: boolean
   setScoreVisible: (value: boolean) => void
   toggleScoreVisible: () => void
 }
 
 interface GameSlice {
-  started: boolean
-  setStarted: () => void
-  currentDroneId: string | null
-  setCurrentDroneId: (key: string | null) => void
+  width: number
+  height: number
+  setMapSize: (size: MapSize) => void
+  currentDrone: MapCoordinates | null
+  setCurrentDrone: (drone: MapCoordinates | null) => void
   currentPackageId: string | null
   setCurrentPackageId: (key: string | null) => void
-}
-
-interface SharedSlice {
-  startGame: () => void
 }
 
 const createVisibilitySlice: StateCreator<
@@ -28,8 +24,6 @@ const createVisibilitySlice: StateCreator<
   [],
   VisibilitySlice
 > = (set) => ({
-  controlsVisible: true,
-  setControlsVisible: (value) => set(() => ({ controlsVisible: value })),
   scoreVisible: false,
   setScoreVisible: (value) => set(() => ({ scoreVisible: value })),
   toggleScoreVisible: () =>
@@ -42,32 +36,20 @@ const createGameSlice: StateCreator<
   [],
   GameSlice
 > = (set) => ({
-  started: false,
-  setStarted: () => set(() => ({ started: true })),
-  currentDroneId: null,
-  setCurrentDroneId: (key) => set(() => ({ currentDroneId: key })),
+  width: 0,
+  height: 0,
+  setMapSize: (size) => set(() => ({ width: size.width, height: size.height })),
+  currentDrone: null,
+  setCurrentDrone: (drone) => set(() => ({ currentDrone: drone })),
   currentPackageId: null,
   setCurrentPackageId: (key) => set(() => ({ currentPackageId: key })),
 })
 
-const createSharedSlice: StateCreator<
-  VisibilitySlice & GameSlice,
-  [['zustand/devtools', never]],
-  [],
-  SharedSlice
-> = (set, get) => ({
-  startGame: () => {
-    get().setControlsVisible(false)
-    get().setStarted()
-  },
-})
-
-const useBoundStore = create<VisibilitySlice & GameSlice & SharedSlice>()(
+const useBoundStore = create<VisibilitySlice & GameSlice>()(
   devtools(
     (...a) => ({
       ...createVisibilitySlice(...a),
       ...createGameSlice(...a),
-      ...createSharedSlice(...a),
     }),
     { name: 'bound-store' }
   )

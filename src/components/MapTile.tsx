@@ -10,20 +10,20 @@ const MapTile = ({ type }: MapTileProps) => {
 
   switch (type) {
     case 'dropZone':
-      background = 'blue'
-      value = 'D'
+      background = 'royalblue'
+      value = 'Z'
       break
     case 'safeZone':
-      background = 'green'
+      background = 'seagreen'
       value = 'S'
       break
     case 'skyScraper':
-      background = 'grey'
+      background = 'dimgrey'
       value = 'X'
       break
     default:
       background = 'transparent'
-      value = '.'
+      value = ''
       break
   }
 
@@ -33,7 +33,11 @@ const MapTile = ({ type }: MapTileProps) => {
         padding: '5px',
         width: '30px',
         height: '30px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: background,
+        border: '1px solid grey',
       }}
     >
       <span>{value}</span>
