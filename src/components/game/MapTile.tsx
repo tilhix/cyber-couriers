@@ -1,4 +1,4 @@
-import { MapElementType } from '../util/types'
+import { MapElementType } from '../../util/types'
 
 type MapTileProps = {
   type: MapElementType
@@ -10,20 +10,17 @@ const MapTile = ({ type }: MapTileProps) => {
 
   switch (type) {
     case 'dropZone':
-      background = 'royalblue'
-      value = 'Z'
+      background = '#1ba1e2'
       break
     case 'safeZone':
-      background = 'seagreen'
-      value = 'S'
+      background = '#00aba9'
       break
     case 'skyScraper':
       background = 'dimgrey'
-      value = 'X'
+      value = 'x'
       break
     default:
       background = 'transparent'
-      value = ''
       break
   }
 

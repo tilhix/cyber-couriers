@@ -1,16 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useMemo } from 'react'
-import apiClient from '../util/api'
-import useStore from '../util/store'
+import { useCallback, useEffect, useMemo } from 'react'
+import apiClient from '../../util/api'
+import useStore from '../../util/store'
 import {
   DronesData,
-  GameData,
   GameElement,
-  GameMap,
   MapData,
   MapElement,
   PackagesData,
-} from '../util/types'
+} from '../../util/types'
 import GameLayer from './GameLayer'
 import MapLayer from './MapLayer'
 import ScoreLayer from './ScoreLayer'
@@ -33,7 +31,7 @@ const fetchPackages = async (): Promise<PackagesData> => {
 const Game = () => {
   const scoreVisible = useStore((state) => state.scoreVisible)
   const setCurrentDrone = useStore((state) => state.setCurrentDrone)
-  const setCurrentPackageId = useStore((state) => state.setCurrentPackageId)
+  const setCurrentPackage = useStore((state) => state.setCurrentPackage)
   const width = useStore((state) => state.width)
   const height = useStore((state) => state.height)
   const setMapSize = useStore((state) => state.setMapSize)
@@ -69,9 +67,13 @@ const Game = () => {
         (drone) => drone.status === 0
       )
       if (activeDrone) {
+        const carriedPackage = activeDrone.carriedPackage
+          ? activeDrone.carriedPackage.key
+          : null
         const droneData = {
           key: activeDrone.key,
           location: activeDrone.location,
+          carriedPackage,
         }
         setCurrentDrone(droneData)
       }
@@ -81,68 +83,77 @@ const Game = () => {
   useEffect(() => {
     if (packages.data) {
       const activePackage = packages.data.find(
-        (item) => item.packageStatus === 0
+        (item) => item.packageStatus === (0 || 2)
       )
-      if (activePackage) setCurrentPackageId(activePackage.key)
-    }
-  }, [packages, setCurrentPackageId])
-
-  const gameMap: GameMap = useMemo(() => {
-    const { data } = map
-    if (data) {
-      const defaultTile: MapElement = {
-        key: null,
-        type: 'empty',
+      if (activePackage) {
+        const packageData = {
+          key: activePackage.key,
+          location: activePackage.location,
+        }
+        setCurrentPackage(packageData)
       }
-      const newMap: GameMap = [...Array(data.height)].map(() =>
-        [...Array(data.width)].map(() => defaultTile)
-      )
-      data.dropZones.forEach((elem) => {
-        const x = elem.location.xCoordinate
-        const y = elem.location.yCoordinate
-        newMap[y][x] = {
-          key: elem.key,
-          type: 'dropZone',
-        }
-      })
-      data.safeZones.forEach((elem) => {
-        const x = elem.location.xCoordinate
-        const y = elem.location.yCoordinate
-        newMap[y][x] = {
-          key: elem.key,
-          type: 'safeZone',
-        }
-      })
-      data.skyScrapers.forEach((elem) => {
-        const x = elem.location.xCoordinate
-        const y = elem.location.yCoordinate
-        newMap[y][x] = {
-          key: elem.key,
-          type: 'skyScraper',
-        }
-      })
+    }
+  }, [packages, setCurrentPackage])
 
+  const getInitialMap = useCallback(
+    <T extends GameElement | MapElement>(element: T): T[][] => {
+      const newMap = [...Array(height)].map(() =>
+        [...Array(width)].map(() => element)
+      )
+      return newMap
+    },
+    [width, height]
+  )
+
+  const gameMap = useMemo(() => {
+    const defaultElement: MapElement = {
+      key: null,
+      type: 'empty',
+    }
+
+    const newMap = getInitialMap(defaultElement)
+    if (newMap.length > 0) {
+      if (map.data) {
+        map.data.dropZones.forEach((elem) => {
+          const x = elem.location.xCoordinate
+          const y = elem.location.yCoordinate
+          newMap[y][x] = {
+            key: elem.key,
+            type: 'dropZone',
+          }
+        })
+        map.data.safeZones.forEach((elem) => {
+          const x = elem.location.xCoordinate
+          const y = elem.location.yCoordinate
+          newMap[y][x] = {
+            key: elem.key,
+            type: 'safeZone',
+          }
+        })
+        map.data.skyScrapers.forEach((elem) => {
+          const x = elem.location.xCoordinate
+          const y = elem.location.yCoordinate
+          newMap[y][x] = {
+            key: elem.key,
+            type: 'skyScraper',
+          }
+        })
+      }
       return newMap
     }
     return []
-  }, [map])
+  }, [getInitialMap, map])
 
-  const initialGameData: GameData = useMemo(() => {
+  const gameData = useMemo(() => {
     const defaultElement: GameElement = {
       droneType: null,
       droneData: null,
-      packageType: null,
       packageData: null,
-      destination: false,
+      destination: null,
     }
-    const newMap: GameData = [...Array(height)].map(() =>
-      [...Array(width)].map(() => defaultElement)
-    )
-    return newMap
-  }, [width, height])
 
-  const gameData: GameData = useMemo(() => {
-    const gameData = initialGameData
+    const gameData = getInitialMap(defaultElement)
+
     if (gameData.length > 0) {
       if (drones.data) {
         drones.data.runnerDrones.forEach((elem) => {
@@ -153,6 +164,16 @@ const Game = () => {
               ...gameData[y][x],
               droneType: 'runnerDrone',
               droneData: elem,
+            }
+
+            if (elem.carriedPackage) {
+              const destinationX = elem.carriedPackage.destination.xCoordinate
+              const destinationY = elem.carriedPackage.destination.yCoordinate
+
+              gameData[destinationY][destinationX] = {
+                ...gameData[destinationY][destinationX],
+                destination: elem.carriedPackage.key,
+              }
             }
           }
         })
@@ -176,7 +197,6 @@ const Game = () => {
             const y = elem.location.yCoordinate
             gameData[y][x] = {
               ...gameData[y][x],
-              packageType: elem.packageType ? 'packageSensitive' : 'package',
               packageData: elem,
             }
 
@@ -185,20 +205,28 @@ const Game = () => {
 
             gameData[destinationY][destinationX] = {
               ...gameData[destinationY][destinationX],
-              destination: true,
+              destination: elem.key,
             }
           }
         })
       }
     }
     return gameData
-  }, [initialGameData, drones, packages])
+  }, [getInitialMap, drones, packages])
 
   return (
-    <div style={{ border: '1px solid', position: 'relative' }}>
-      <MapLayer gameMap={gameMap} />
-      <GameLayer gameData={gameData} />
-      {scoreVisible && <ScoreLayer />}
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <div style={{ border: '1px solid', position: 'relative' }}>
+        <MapLayer gameMap={gameMap} />
+        <GameLayer gameData={gameData} />
+        {scoreVisible && <ScoreLayer />}
+      </div>
     </div>
   )
 }

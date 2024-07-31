@@ -2,21 +2,13 @@ import useStore from '../util/store'
 
 const Info = () => {
   const currentDrone = useStore((state) => state.currentDrone)
-  const currentPackageId = useStore((state) => state.currentPackageId)
+  const currentPackage = useStore((state) => state.currentPackage)
 
   return (
     <div>
-      {currentDrone && (
-        <>
-          <p>Drone ID: {currentDrone?.key}</p>
-          <p>
-            X: {currentDrone.location.xCoordinate}, Y:{' '}
-            {currentDrone.location.yCoordinate}
-          </p>
-        </>
-      )}
-
-      <p>Current package: {currentPackageId}</p>
+      <h1>Cyber Couriers</h1>
+      {currentDrone && <p>Drone: {currentDrone.key}</p>}
+      {currentPackage && <p>Package: {currentPackage.key}</p>}
     </div>
   )
 }

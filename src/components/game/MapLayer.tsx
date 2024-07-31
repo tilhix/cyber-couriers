@@ -1,4 +1,4 @@
-import { GameMap } from '../util/types'
+import { GameMap } from '../../util/types'
 import MapTile from './MapTile'
 
 type MapLayerProps = {

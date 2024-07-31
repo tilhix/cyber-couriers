@@ -3,29 +3,31 @@ import {
   DroneType,
   GameElement,
   PackageData,
-  PackageType,
   RunnerDroneData,
-} from '../util/types'
+} from '../../util/types'
 
 type GameTileProps = {
   elem: GameElement
 }
 
 const GameTile = ({ elem }: GameTileProps) => {
-  const { droneData, droneType, packageData, packageType, destination } = elem
-  const isPackage = packageType && packageData
+  const { droneData, droneType, packageData, destination } = elem
+  const isPackage = packageData
   const isDrone = droneType && droneData
 
   return (
     <div
       style={{
+        position: 'relative',
         width: '30px',
         height: '30px',
         padding: '3px',
-        border: destination ? '3px solid' : 'none',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        ...(destination && { border: '3px solid' }),
       }}
     >
-      {isPackage && <Package type={packageType} data={packageData} />}
+      {isPackage && <Package data={packageData} />}
       {isDrone && <Drone type={droneType} data={droneData} />}
     </div>
   )
@@ -37,50 +39,52 @@ type DroneProps = {
 }
 
 const Drone = ({ type, data }: DroneProps) => {
-  const background = type === 'runnerDrone' ? 'darkorange' : 'crimson'
+  const isRunner = type === 'runnerDrone'
+  const background = isRunner ? '#ff0097' : '#a200ff'
   const carriedPackage = 'carriedPackage' in data ? data.carriedPackage : null
 
   return (
     <div
       style={{
-        width: '100%',
-        height: '100%',
+        width: '24px',
+        height: '24px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         background: background,
         borderRadius: '50%',
+        ...(carriedPackage && { border: '3px solid', fontSize: '12px' }),
+        ...(isRunner && { position: 'absolute', top: '3px', right: '3px' }),
       }}
     >
-      <span>{type === 'runnerDrone' ? 'D' : 'P'}</span>
-      {carriedPackage && <span>+P</span>}
+      <span>{isRunner ? 'R' : 'D'}</span>
+      {carriedPackage && <span>{carriedPackage.packageType ? '+' : '-'}</span>}
     </div>
   )
 }
 
 type PackageProps = {
-  type: PackageType
   data: PackageData
 }
 
-const Package = ({ type, data }: PackageProps) => {
-  const background = type === 'packageSensitive' ? 'purple' : 'orchid'
-  const { packageStatus } = data
+const Package = ({ data }: PackageProps) => {
+  const background = '#f09609'
+  const { packageType } = data
 
   return (
     <div
       style={{
-        width: '100%',
-        height: '100%',
+        width: '24px',
+        height: '24px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: background,
         borderRadius: '50%',
+        background: background,
         border: '3px solid',
       }}
     >
-      <span>{packageStatus}</span>
+      <span>{packageType ? '+' : '-'}</span>
     </div>
   )
 }

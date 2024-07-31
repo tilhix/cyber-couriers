@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import apiClient, { checkApiError } from '../util/api'
-import useStore from '../util/store'
-import { PackageData, RunnerDroneData } from '../util/types'
+import apiClient, { checkApiError } from '../../util/api'
+import useStore from '../../util/store'
+import { PackageData, RunnerDroneData } from '../../util/types'
 
 const deleteDrone = async (id: string) => {
   const response = await apiClient.delete(`/api/drones/${id}`)
@@ -22,8 +22,8 @@ const ElementControls = () => {
   const queryClient = useQueryClient()
   const currentDrone = useStore((state) => state.currentDrone)
   const setCurrentDrone = useStore((state) => state.setCurrentDrone)
-  const currentPackageId = useStore((state) => state.currentPackageId)
-  const setCurrentPackageId = useStore((state) => state.setCurrentPackageId)
+  const currentPackage = useStore((state) => state.currentPackage)
+  const setCurrentPackage = useStore((state) => state.setCurrentPackage)
 
   const deleteMutation = useMutation({
     mutationFn: deleteDrone,
@@ -64,15 +64,20 @@ const ElementControls = () => {
       const droneData = {
         key: drone.key,
         location: drone.location,
+        carriedPackage: null,
       }
       setCurrentDrone(droneData)
     }
   }
 
   const addNewPackage = async () => {
-    if (!currentPackageId) {
+    if (!currentPackage) {
       const newPackage = await addPackageMutation.mutateAsync()
-      setCurrentPackageId(newPackage.key)
+      const packageData = {
+        key: newPackage.key,
+        location: newPackage.location,
+      }
+      setCurrentPackage(packageData)
     }
   }
 
@@ -89,7 +94,9 @@ const ElementControls = () => {
   return (
     <>
       {currentDrone && <button onClick={handleDestroy}>destroy</button>}
-      {!currentDrone && <button onClick={handleAdd}>add</button>}
+      {(!currentDrone || !currentPackage) && (
+        <button onClick={handleAdd}>add</button>
+      )}
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import apiClient from '../util/api'
-import { ScoreBoardData } from '../util/types'
+import apiClient from '../../util/api'
+import { ScoreBoardData } from '../../util/types'
 
 const fetchScore = async (): Promise<ScoreBoardData> => {
   const response = await apiClient.get(`/api/scoreboard`)

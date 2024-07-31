@@ -33,9 +33,8 @@ export type GameData = GameElement[][] | []
 export type GameElement = {
   droneType: DroneType | null
   droneData: DroneData | RunnerDroneData | null
-  packageType: PackageType | null
   packageData: PackageData | null
-  destination: boolean
+  destination: string | null
 }
 
 export type DroneData = {
@@ -49,6 +48,12 @@ export type RunnerDroneData = DroneData & {
   carriedPackage: PackageData | null
 }
 
+export type CurrentDrone = MapCoordinates & {
+  carriedPackage: string | null
+}
+
+export type CurrentPackage = MapCoordinates
+
 export type PackageData = {
   key: string
   location: LocationType
@@ -58,7 +63,6 @@ export type PackageData = {
 }
 
 export type DroneType = 'patrolDrone' | 'runnerDrone'
-export type PackageType = 'package' | 'packageSensitive'
 
 export type ScoreBoardData = {
   deliveredPackages: number

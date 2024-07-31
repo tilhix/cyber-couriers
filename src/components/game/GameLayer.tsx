@@ -1,4 +1,4 @@
-import { GameData } from '../util/types'
+import { GameData } from '../../util/types'
 import GameTile from './GameTile'
 
 type GameLayerProps = {

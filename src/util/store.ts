@@ -1,6 +1,6 @@
 import { create, StateCreator } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { MapCoordinates, MapSize } from './types'
+import { CurrentDrone, CurrentPackage, MapSize } from './types'
 
 interface VisibilitySlice {
   scoreVisible: boolean
@@ -12,10 +12,10 @@ interface GameSlice {
   width: number
   height: number
   setMapSize: (size: MapSize) => void
-  currentDrone: MapCoordinates | null
-  setCurrentDrone: (drone: MapCoordinates | null) => void
-  currentPackageId: string | null
-  setCurrentPackageId: (key: string | null) => void
+  currentDrone: CurrentDrone | null
+  setCurrentDrone: (drone: CurrentDrone | null) => void
+  currentPackage: CurrentPackage | null
+  setCurrentPackage: (data: CurrentPackage | null) => void
 }
 
 const createVisibilitySlice: StateCreator<
@@ -41,8 +41,8 @@ const createGameSlice: StateCreator<
   setMapSize: (size) => set(() => ({ width: size.width, height: size.height })),
   currentDrone: null,
   setCurrentDrone: (drone) => set(() => ({ currentDrone: drone })),
-  currentPackageId: null,
-  setCurrentPackageId: (key) => set(() => ({ currentPackageId: key })),
+  currentPackage: null,
+  setCurrentPackage: (data) => set(() => ({ currentPackage: data })),
 })
 
 const useBoundStore = create<VisibilitySlice & GameSlice>()(

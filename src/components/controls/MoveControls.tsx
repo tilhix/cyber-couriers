@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import apiClient, { checkApiError } from '../util/api'
-import useStore from '../util/store'
-import { LocationType } from '../util/types'
+import apiClient, { checkApiError } from '../../util/api'
+import useStore from '../../util/store'
+import { LocationType } from '../../util/types'
 
 const moveDrone = async (variables: { id: string; location: LocationType }) => {
   const { id, location } = variables
@@ -56,7 +56,6 @@ const MoveControls = () => {
 
         const variables = { id: currentDrone.key, location: newLocation }
         if (newXCoordinate != null || newYCoordinate != null) {
-          console.log(currentDrone.location, newLocation)
           await moveMutation.mutateAsync(variables)
         }
       } catch (error) {
