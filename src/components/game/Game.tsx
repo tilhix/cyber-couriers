@@ -91,7 +91,6 @@ const Game = () => {
 
   useEffect(() => {
     if (packages.data) {
-      console.log(packages.data)
       const activePackage = packages.data.find(
         (item) => item.packageStatus === 0
       )

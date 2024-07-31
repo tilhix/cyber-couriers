@@ -5,6 +5,7 @@ import PackageControls from './PackageControls'
 
 const Controls = () => {
   const toggleScoreVisible = useStore((state) => state.toggleScoreVisible)
+  const currentDrone = useStore((state) => state.currentDrone)
 
   const handleClick = () => {
     toggleScoreVisible()
@@ -24,16 +25,18 @@ const Controls = () => {
         <ElementControls />
         <PackageControls />
       </div>
-      <div
-        style={{
-          marginTop: '10px',
-          display: 'flex',
-          gap: '10px',
-          flexWrap: 'wrap',
-        }}
-      >
-        <MoveControls />
-      </div>
+      {currentDrone && (
+        <div
+          style={{
+            marginTop: '10px',
+            display: 'flex',
+            gap: '10px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <MoveControls />
+        </div>
+      )}
     </>
   )
 }

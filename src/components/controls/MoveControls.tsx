@@ -1,9 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import apiClient, { checkApiError } from '../../util/api'
 import useStore from '../../util/store'
-import { LocationType } from '../../util/types'
+import { LocationType, RunnerDroneData } from '../../util/types'
 
-const moveDrone = async (variables: { id: string; location: LocationType }) => {
+const moveDrone = async (variables: {
+  id: string
+  location: LocationType
+}): Promise<RunnerDroneData> => {
   const { id, location } = variables
   const response = await apiClient.put(`/api/drones/${id}`, location)
   return response.data
@@ -15,11 +18,13 @@ const MoveControls = () => {
   const currentDrone = useStore((state) => state.currentDrone)
   const width = useStore((state) => state.width)
   const height = useStore((state) => state.height)
+  const removeDroneAndPackage = useStore((state) => state.removeDroneAndPackage)
 
   const moveMutation = useMutation({
     mutationFn: moveDrone,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['drones'] })
+      queryClient.invalidateQueries({ queryKey: ['packages'] })
     },
   })
 
@@ -56,7 +61,10 @@ const MoveControls = () => {
 
         const variables = { id: currentDrone.key, location: newLocation }
         if (newXCoordinate != null || newYCoordinate != null) {
-          await moveMutation.mutateAsync(variables)
+          const drone = await moveMutation.mutateAsync(variables)
+          if (drone.status === 1) {
+            removeDroneAndPackage()
+          }
         }
       } catch (error) {
         const errorInfo = checkApiError(error)
@@ -68,8 +76,8 @@ const MoveControls = () => {
   return (
     <>
       <button onClick={() => handleMove('left')}>left</button>
-      <button onClick={() => handleMove('up')}>up</button>
       <button onClick={() => handleMove('right')}>right</button>
+      <button onClick={() => handleMove('up')}>up</button>
       <button onClick={() => handleMove('down')}>down</button>
     </>
   )

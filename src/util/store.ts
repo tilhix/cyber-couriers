@@ -16,6 +16,7 @@ interface GameSlice {
   setCurrentDrone: (drone: CurrentDrone | null) => void
   currentPackage: CurrentPackage | null
   setCurrentPackage: (data: CurrentPackage | null) => void
+  removeDroneAndPackage: () => void
 }
 
 const createVisibilitySlice: StateCreator<
@@ -43,6 +44,8 @@ const createGameSlice: StateCreator<
   setCurrentDrone: (drone) => set(() => ({ currentDrone: drone })),
   currentPackage: null,
   setCurrentPackage: (data) => set(() => ({ currentPackage: data })),
+  removeDroneAndPackage: () =>
+    set(() => ({ currentDrone: null, currentPackage: null })),
 })
 
 const useBoundStore = create<VisibilitySlice & GameSlice>()(

@@ -16,12 +16,13 @@ const addDrone = async (): Promise<RunnerDroneData> => {
 const ElementControls = () => {
   const queryClient = useQueryClient()
   const currentDrone = useStore((state) => state.currentDrone)
-  const setCurrentDrone = useStore((state) => state.setCurrentDrone)
+  const removeDroneAndPackage = useStore((state) => state.removeDroneAndPackage)
 
   const deleteMutation = useMutation({
     mutationFn: deleteDrone,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['drones'] })
+      queryClient.invalidateQueries({ queryKey: ['packages'] })
     },
   })
 
@@ -36,7 +37,9 @@ const ElementControls = () => {
     if (currentDrone) {
       try {
         await deleteMutation.mutateAsync(currentDrone.key)
-        setCurrentDrone(null)
+        if (currentDrone.carriedPackage) {
+          removeDroneAndPackage()
+        }
       } catch (error) {
         const errorInfo = checkApiError(error)
         console.log(errorInfo)

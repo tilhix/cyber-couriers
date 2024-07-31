@@ -28,7 +28,7 @@ const ScoreLayer = () => {
         background: 'grey',
       }}
     >
-      <p>Score Board</p>
+      <h3>Score Board</h3>
       {score.data && (
         <ul style={{ textAlign: 'left' }}>
           <li>Moves: {score.data.moves}</li>
