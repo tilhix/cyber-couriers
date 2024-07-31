@@ -67,28 +67,39 @@ const Game = () => {
         (drone) => drone.status === 0
       )
       if (activeDrone) {
-        const carriedPackage = activeDrone.carriedPackage
-          ? activeDrone.carriedPackage.key
-          : null
+        const dronePackage = activeDrone.carriedPackage
+        const carriedPackage = dronePackage ? dronePackage.key : null
+
         const droneData = {
           key: activeDrone.key,
           location: activeDrone.location,
           carriedPackage,
         }
         setCurrentDrone(droneData)
+
+        if (dronePackage) {
+          const packageData = {
+            key: dronePackage.key,
+            location: dronePackage.location,
+            destination: dronePackage.destination,
+          }
+          setCurrentPackage(packageData)
+        }
       }
     }
-  }, [drones, setCurrentDrone])
+  }, [drones, setCurrentDrone, setCurrentPackage])
 
   useEffect(() => {
     if (packages.data) {
+      console.log(packages.data)
       const activePackage = packages.data.find(
-        (item) => item.packageStatus === (0 || 2)
+        (item) => item.packageStatus === 0
       )
       if (activePackage) {
         const packageData = {
           key: activePackage.key,
           location: activePackage.location,
+          destination: activePackage.destination,
         }
         setCurrentPackage(packageData)
       }

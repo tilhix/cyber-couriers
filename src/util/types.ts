@@ -52,7 +52,9 @@ export type CurrentDrone = MapCoordinates & {
   carriedPackage: string | null
 }
 
-export type CurrentPackage = MapCoordinates
+export type CurrentPackage = MapCoordinates & {
+  destination: LocationType
+}
 
 export type PackageData = {
   key: string

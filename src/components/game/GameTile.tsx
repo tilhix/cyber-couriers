@@ -58,7 +58,7 @@ const Drone = ({ type, data }: DroneProps) => {
       }}
     >
       <span>{isRunner ? 'R' : 'D'}</span>
-      {carriedPackage && <span>{carriedPackage.packageType ? '+' : '-'}</span>}
+      {carriedPackage && <span>{carriedPackage.packageType ? '*' : '+'}</span>}
     </div>
   )
 }
@@ -84,7 +84,7 @@ const Package = ({ data }: PackageProps) => {
         border: '3px solid',
       }}
     >
-      <span>{packageType ? '+' : '-'}</span>
+      <span>{packageType ? '*' : '+'}</span>
     </div>
   )
 }

@@ -11,19 +11,30 @@ const Controls = () => {
   }
 
   return (
-    <div
-      style={{
-        marginTop: '20px',
-        display: 'flex',
-        gap: '10px',
-        flexWrap: 'wrap',
-      }}
-    >
-      <button onClick={handleClick}>toggle scoreboard</button>
-      <ElementControls />
-      <MoveControls />
-      <PackageControls />
-    </div>
+    <>
+      <div
+        style={{
+          marginTop: '20px',
+          display: 'flex',
+          gap: '10px',
+          flexWrap: 'wrap',
+        }}
+      >
+        <button onClick={handleClick}>scoreboard</button>
+        <ElementControls />
+        <PackageControls />
+      </div>
+      <div
+        style={{
+          marginTop: '10px',
+          display: 'flex',
+          gap: '10px',
+          flexWrap: 'wrap',
+        }}
+      >
+        <MoveControls />
+      </div>
+    </>
   )
 }
 

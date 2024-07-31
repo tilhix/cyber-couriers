@@ -68,8 +68,8 @@ const MoveControls = () => {
   return (
     <>
       <button onClick={() => handleMove('left')}>left</button>
-      <button onClick={() => handleMove('right')}>right</button>
       <button onClick={() => handleMove('up')}>up</button>
+      <button onClick={() => handleMove('right')}>right</button>
       <button onClick={() => handleMove('down')}>down</button>
     </>
   )
